@@ -4,6 +4,7 @@ import 'mocha';
 import { SQSEvent, SQSRecord } from 'aws-lambda';
 import { Result } from '../../src/models';
 import {
+    IRecordErrorCommand,
     ProcessAllSqsEventInteractor,
 } from '../../src/interactors/ProcessAllSqsEventInteractor';
 import { IProcessMessageInteractor, ProcessMessageError } from '../../src/interactors/ProcessMessageInteractor';
@@ -35,10 +36,19 @@ function createProcessAllSqsEventInteractor(overrides?: {
     }
     const processMessageInteractorSpy = sinon.spy(processMessageInteractor, 'Execute');
 
+    const recordErrorCommand: IRecordErrorCommand = {
+        Execute: () => CompletedPromise({
+            success: true,
+        })
+    }
+    const recordErrorCommandSpy = sinon.spy(recordErrorCommand, 'Execute');
+
     return {
         interactor: new ProcessAllSqsEventInteractor(
+            recordErrorCommand,
             processMessageInteractor
         ),
+        recordErrorCommandSpy,
         processMessageInteractorSpy,
     }
 }
@@ -64,17 +74,19 @@ describe('ProcessAllSqsEventInteractor', function () {
 
         const data1 = { one: 1 }
         const data2 = { two: 2 }
+        const data3 = 'i am plain text'
 
         // Act
         const response = await interactor.Execute(asSqsEvent([
             asValidSqsRecord('type', data1),
             asValidSqsRecord('type', data2),
+            asValidSqsRecord('type', data3),
         ]))
 
         // Assert
         expect(response.success).to.equal(true);
         expect(response.error).to.equal(undefined);
-        sinon.assert.callCount(processMessageInteractorSpy, 2);
+        sinon.assert.callCount(processMessageInteractorSpy, 3);
         sinon.assert.calledWithExactly(processMessageInteractorSpy.getCall(0),
             sinon.match({
                 Type: 'type', Data: data1
@@ -83,5 +95,30 @@ describe('ProcessAllSqsEventInteractor', function () {
             sinon.match({
                 Type: 'type', Data: data2
             }));
+        sinon.assert.calledWithExactly(processMessageInteractorSpy.getCall(2),
+            sinon.match({
+                Type: 'type', Data: data3
+            }));
+    })
+
+    it('SQS Records with non JSON body not processed, recorded as error', async () => {
+
+        // Arrange
+        const {
+            interactor,
+            processMessageInteractorSpy,
+            recordErrorCommandSpy
+        } = createProcessAllSqsEventInteractor()
+
+        // Act
+        const response = await interactor.Execute(asSqsEvent([
+            { body: 'i am plain text' } as SQSRecord
+        ]))
+
+        // Assert
+        expect(response.success).to.equal(true);
+        expect(response.error).to.equal(undefined);
+        sinon.assert.callCount(processMessageInteractorSpy, 0)
+        sinon.assert.calledOnceWithExactly(recordErrorCommandSpy, 'invalid-json');;
     })
 });
