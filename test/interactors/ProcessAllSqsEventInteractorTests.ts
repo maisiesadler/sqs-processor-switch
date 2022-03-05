@@ -101,7 +101,28 @@ describe('ProcessAllSqsEventInteractor', function () {
             }));
     })
 
-    it('SQS Records with non JSON body not processed, recorded as error', async () => {
+    // it('SQS Records with non JSON body not processed, recorded as error', async () => {
+
+    //     // Arrange
+    //     const {
+    //         interactor,
+    //         processMessageInteractorSpy,
+    //         recordErrorCommandSpy
+    //     } = createProcessAllSqsEventInteractor()
+
+    //     // Act
+    //     const response = await interactor.Execute(asSqsEvent([
+    //         { body: 'i am plain text' } as SQSRecord
+    //     ]))
+
+    //     // Assert
+    //     expect(response.success).to.equal(true);
+    //     expect(response.error).to.equal(undefined);
+    //     sinon.assert.callCount(processMessageInteractorSpy, 0)
+    //     sinon.assert.calledOnceWithExactly(recordErrorCommandSpy, 'invalid-json');;
+    // })
+
+    it('SQS Records with missing fields is recorded as error', async () => {
 
         // Arrange
         const {
@@ -112,13 +133,13 @@ describe('ProcessAllSqsEventInteractor', function () {
 
         // Act
         const response = await interactor.Execute(asSqsEvent([
-            { body: 'i am plain text' } as SQSRecord
+            { body: '{}' } as SQSRecord
         ]))
 
         // Assert
         expect(response.success).to.equal(true);
         expect(response.error).to.equal(undefined);
         sinon.assert.callCount(processMessageInteractorSpy, 0)
-        sinon.assert.calledOnceWithExactly(recordErrorCommandSpy, 'invalid-json');;
+        sinon.assert.calledOnceWithExactly(recordErrorCommandSpy, 'missing-fields');;
     })
 });
