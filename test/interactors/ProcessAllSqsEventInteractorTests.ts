@@ -142,4 +142,32 @@ describe('ProcessAllSqsEventInteractor', function () {
         sinon.assert.callCount(processMessageInteractorSpy, 0)
         sinon.assert.calledOnceWithExactly(recordErrorCommandSpy, 'missing-fields');;
     })
+
+    it('Process message fails with unknown type, record failure', async () => {
+
+        // Arrange
+        const {
+            interactor,
+            processMessageInteractorSpy,
+            recordErrorCommandSpy
+        } = createProcessAllSqsEventInteractor({
+            processMessageResult: {
+                success: false,
+                error: 'unknown-type'
+            }
+        })
+
+        // Act
+        const response = await interactor.Execute(asSqsEvent([
+            asValidSqsRecord('type', {}),
+        ]))
+
+        // Assert
+        expect(response.success).to.equal(true);
+        expect(response.error).to.equal(undefined);
+        sinon.assert.calledOnceWithExactly(
+            processMessageInteractorSpy,
+            sinon.match({ Type: 'type', Data: {} }));;
+        sinon.assert.calledOnceWithExactly(recordErrorCommandSpy, 'unknown-type');;
+    })
 });
