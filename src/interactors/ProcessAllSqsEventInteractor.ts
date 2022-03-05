@@ -1,12 +1,7 @@
 import { SQSEvent, SQSRecord } from "aws-lambda";
 import { Result } from "../models";
+import { IRecordErrorCommand } from "./commands";
 import { IProcessMessageInteractor, Message } from "./ProcessMessageInteractor";
-
-export type RecordedError = 'invalid-json' | 'missing-fields' | 'unknown-type'
-
-export interface IRecordErrorCommand {
-    Execute(recordedError: RecordedError): Promise<Result<void, void>>
-}
 
 export interface IProcessAllSqsEventInteractor {
     Execute(sqsEvent: SQSEvent): Promise<Result<void, ProcessAllMessagesError>>

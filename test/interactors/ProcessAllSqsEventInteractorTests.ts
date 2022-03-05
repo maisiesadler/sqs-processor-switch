@@ -3,11 +3,9 @@ import * as sinon from 'sinon';
 import 'mocha';
 import { SQSEvent, SQSRecord } from 'aws-lambda';
 import { Result } from '../../src/models';
-import {
-    IRecordErrorCommand,
-    ProcessAllSqsEventInteractor,
-} from '../../src/interactors/ProcessAllSqsEventInteractor';
+import { ProcessAllSqsEventInteractor } from '../../src/interactors/ProcessAllSqsEventInteractor';
 import { IProcessMessageInteractor, ProcessMessageError } from '../../src/interactors/ProcessMessageInteractor';
+import { IRecordErrorCommand } from '../../src/interactors/commands';
 
 const CompletedPromise = <T>(value: T) => new Promise<T>((resolve, reject) => {
     resolve(value)
