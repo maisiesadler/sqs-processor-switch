@@ -7,8 +7,8 @@ export interface QueueConfiguration {
 }
 
 export interface Message {
-    Type: string,
-    Data: any
+    Type: string
+    Data: string
 }
 
 export type ProcessMessageError = 'unknown-type'

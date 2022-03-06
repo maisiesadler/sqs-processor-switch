@@ -51,7 +51,7 @@ describe('ProcessMessageInteractor', function () {
         // Act
         const response = await interactor.Execute({
             Type: 'pizza',
-            Data: {},
+            Data: '{}',
         })
 
         // Assert
@@ -69,7 +69,7 @@ describe('ProcessMessageInteractor', function () {
         // Act
         const response = await interactor.Execute({
             Type: 'some-unknown-thing',
-            Data: {},
+            Data: '{}',
         })
 
         // Assert
