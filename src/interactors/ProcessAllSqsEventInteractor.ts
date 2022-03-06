@@ -7,7 +7,7 @@ export interface IProcessAllSqsEventInteractor {
     Execute(sqsEvent: SQSEvent): Promise<Result<void, ProcessAllMessagesError>>
 }
 
-export type ProcessAllMessagesError = 'ErrorSavingMapped'
+export type ProcessAllMessagesError = ''
 
 export class ProcessAllSqsEventInteractor implements IProcessAllSqsEventInteractor {
     constructor(
@@ -21,10 +21,10 @@ export class ProcessAllSqsEventInteractor implements IProcessAllSqsEventInteract
             if (messageResult.success) {
                 const processResult = await this.processMessageInteractor.Execute(messageResult.data)
                 if (!processResult.success) {
-                    await this.recordErrorCommand.Execute(processResult.error)
+                    await this.recordErrorCommand.Execute(processResult.error || 'error-processing')
                 }
             } else {
-                await this.recordErrorCommand.Execute(messageResult.error)
+                await this.recordErrorCommand.Execute(messageResult.error || 'error-converting')
             }
         }
 
