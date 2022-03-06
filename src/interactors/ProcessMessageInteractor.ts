@@ -1,4 +1,6 @@
 import { Result } from "../models";
+import { IForwardMessageCommand } from "./commands";
+import { IGetForwardQueueQuery } from "./queries";
 
 export interface QueueConfiguration {
     switches: { [key: string]: string } // message type to sqs queue
@@ -9,23 +11,11 @@ export interface Message {
     Data: any
 }
 
-export type ForwardMessageCommandError = 'invalid-permissions'
-
-export interface IForwardMessageCommand {
-    Execute(queueName: string, message: string): Promise<Result<void, ForwardMessageCommandError>>
-}
-
-export type GetForwardQueueQueryError = 'unknown-type'
-
-export interface IGetForwardQueueQuery {
-    Execute(messageType: string): Promise<Result<{ lambdaName: string }, GetForwardQueueQueryError>>
-}
+export type ProcessMessageError = 'unknown-type'
 
 export interface IProcessMessageInteractor {
     Execute(messages: Message): Promise<Result<void, ProcessMessageError>>
 }
-
-export type ProcessMessageError = 'unknown-type'
 
 export class ProcessMessageInteractor implements IProcessMessageInteractor {
     constructor(
