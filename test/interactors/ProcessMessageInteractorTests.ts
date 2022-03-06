@@ -2,13 +2,9 @@ import { expect } from 'chai';
 import * as sinon from 'sinon';
 import 'mocha';
 import { Result } from '../../src/models';
-import {
-    ForwardMessageCommandError,
-    GetForwardQueueQueryError,
-    IForwardMessageCommand,
-    IGetForwardQueueQuery,
-    ProcessMessageInteractor,
-} from '../../src/interactors/ProcessMessageInteractor';
+import { ProcessMessageInteractor } from '../../src/interactors/ProcessMessageInteractor';
+import { GetForwardQueueQueryError, IGetForwardQueueQuery } from '../../src/interactors/queries';
+import { ForwardMessageCommandError, IForwardMessageCommand } from '../../src/interactors/commands';
 
 const CompletedPromise = <T>(value: T) => new Promise<T>((resolve, reject) => {
     resolve(value)
