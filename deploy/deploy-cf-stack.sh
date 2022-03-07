@@ -14,6 +14,7 @@ aws cloudformation deploy \
     --template-file $templateFile \
     --capabilities CAPABILITY_IAM \
     --no-fail-on-empty-changeset \
+    --parameter-overrides \
         SlackLambdaName=$SLACK_LAMBDA_NAME
 
 processorResource=$(aws cloudformation describe-stack-resource \
