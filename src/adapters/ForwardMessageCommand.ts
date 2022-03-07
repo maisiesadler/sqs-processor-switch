@@ -3,7 +3,7 @@ import { Result } from "../models";
 import { Lambda } from "aws-sdk";
 
 export class ForwardMessageCommand implements IForwardMessageCommand {
-    async Execute(functionName: string, data: any): Promise<Result<void, "invalid-permissions">> {
+    async Execute(functionName: string, data: string): Promise<Result<void, "invalid-permissions">> {
         try {
             await this.invoke(functionName, data)
             return {
@@ -18,7 +18,7 @@ export class ForwardMessageCommand implements IForwardMessageCommand {
         }
     }
 
-    private async invoke(functionName: string, payload: any) {
+    private async invoke(functionName: string, payload: string) {
         const lambda = new Lambda();
         return new Promise<void>((resolve, reject) => {
             lambda.invoke({
