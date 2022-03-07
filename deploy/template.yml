@@ -1,0 +1,79 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Process SQS messages and invoke lambdas within same account
+
+Resources:
+
+  Sqs: 
+    Type: AWS::SQS::Queue
+    Properties: 
+      QueueName: "SqsToLambdaProcessorQueue"
+      ReceiveMessageWaitTimeSeconds: 20
+
+  SqsProcessorLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: [lambda.amazonaws.com]
+            Action: ["sts:AssumeRole"]
+      Path: /
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Action:
+              - logs:*
+              Resource: arn:aws:logs:*:*:*
+        - PolicyName: ReceiveMessage
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "sqs:*"
+                Resource: "*" 
+        - PolicyName: InvokeDataLambda 
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "lambda:InvokeFunction"
+                Resource: !Join
+                  - ':'
+                  - - !Sub arn:aws:lambda:eu-west-2:${AWS::AccountId}:function:*:*
+
+  SqsProcessorLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Runtime: nodejs14.x
+      Handler: index.handler
+      Role:  !GetAtt SqsProcessorLambdaRole.Arn
+      Code:
+        ZipFile: |
+          exports.handler = function(event, context, callback) {
+            console.log('Update code using deploy-function-code.sh')
+            callback(null, 200)
+          }
+      Description: Process SQS messages and invoke lambda
+      TracingConfig:
+        Mode: Active
+      Timeout: 15
+
+  SqsProcessorLambdaLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Join
+          - ''
+          - - '/aws/lambda/'
+            - !Ref SqsProcessorLambda
+      RetentionInDays: 7
+
+  SqsToSqsProcessorLambda:
+    Type: 'AWS::Lambda::EventSourceMapping'
+    Properties:
+      Enabled: true
+      EventSourceArn: !GetAtt Sqs.Arn
+      FunctionName: !Ref SqsProcessorLambda
