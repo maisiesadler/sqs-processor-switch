@@ -48,7 +48,7 @@ jobs:
 
       - name: Run tests
         shell: bash
-        run: npm run test
+        run: npm i && npm run test
 
       - name: Push latest code
         shell: bash
