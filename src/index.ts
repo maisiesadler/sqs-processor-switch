@@ -7,7 +7,7 @@ export const handler = async (
 
     const result = await ProcessAllSqsEvents(event)
 
-    console.log('success', event.Records.length)
+    console.log('result', result, event.Records.length)
 
     return {
         statusCode: 200,
