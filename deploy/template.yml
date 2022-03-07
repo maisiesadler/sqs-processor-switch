@@ -35,7 +35,7 @@ Resources:
                 Action:
                   - "sqs:*"
                 Resource: "*" 
-        - PolicyName: InvokeDataLambda 
+        - PolicyName: InvokeAnyLambdaInAccount 
           PolicyDocument:
             Statement:
               - Effect: Allow
