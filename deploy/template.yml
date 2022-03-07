@@ -1,6 +1,11 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Process SQS messages and invoke lambdas within same account
 
+Parameters:
+  SlackLambdaName:
+    Type: String
+    Description: Function name for slack lambda.
+
 Resources:
 
   Sqs: 
@@ -61,6 +66,9 @@ Resources:
       TracingConfig:
         Mode: Active
       Timeout: 15
+      Environment:
+        Variables:
+          SLACK_LAMBDA_NAME: !Ref SlackLambdaName
 
   SqsProcessorLambdaLogGroup:
     Type: AWS::Logs::LogGroup
