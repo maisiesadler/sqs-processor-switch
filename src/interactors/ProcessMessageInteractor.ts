@@ -1,6 +1,6 @@
 import { Result } from "../models";
 import { IForwardMessageCommand } from "./commands";
-import { IGetForwardQueueQuery } from "./queries";
+import { IGetForwardLambdaQuery } from "./queries";
 
 export interface QueueConfiguration {
     switches: { [key: string]: string } // message type to sqs queue
@@ -19,12 +19,12 @@ export interface IProcessMessageInteractor {
 
 export class ProcessMessageInteractor implements IProcessMessageInteractor {
     constructor(
-        private readonly getForwardQueueQuery: IGetForwardQueueQuery,
+        private readonly getForwardLambdaQuery: IGetForwardLambdaQuery,
         private readonly forwardMessageCommand: IForwardMessageCommand) { }
 
     public async Execute(message: Message): Promise<Result<void, ProcessMessageError>> {
 
-        const getQueueResult = await this.getForwardQueueQuery.Execute(message.Type)
+        const getQueueResult = await this.getForwardLambdaQuery.Execute(message.Type)
 
         if (!getQueueResult.success) {
             return {

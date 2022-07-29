@@ -1,6 +1,6 @@
 import { Result } from "./models";
 import { IRecordErrorCommand } from "./interactors/commands";
-import { ForwardMessageCommand, GetForwardQueueQuery, RecordErrorLogCommand } from "./adapters";
+import { ForwardMessageCommand, GetForwardLambdaQuery, RecordErrorLogCommand } from "./adapters";
 import {
     IProcessAllSqsEventInteractor,
     ProcessAllMessagesError,
@@ -8,7 +8,7 @@ import {
 } from "./interactors/ProcessAllSqsEventInteractor";
 import { IProcessMessageInteractor, ProcessMessageInteractor } from "./interactors/ProcessMessageInteractor";
 import { IForwardMessageCommand } from "./interactors/commands";
-import { IGetForwardQueueQuery } from "./interactors/queries";
+import { IGetForwardLambdaQuery } from "./interactors/queries";
 import { SQSEvent } from "aws-lambda";
 
 
@@ -18,8 +18,8 @@ class Implementations {
         return new ForwardMessageCommand()
     }
 
-    GetForwardQueueQuery() : IGetForwardQueueQuery {
-        return new GetForwardQueueQuery()
+    GetForwardLambdaQuery() : IGetForwardLambdaQuery {
+        return new GetForwardLambdaQuery()
     }
 
     RecordErrorCommand() : IRecordErrorCommand {
@@ -28,7 +28,7 @@ class Implementations {
 
     ProcessMessageInteractor(): IProcessMessageInteractor {
         return new ProcessMessageInteractor(
-            this.GetForwardQueueQuery(),
+            this.GetForwardLambdaQuery(),
             this.ForwardMessageCommand()
         )
     }

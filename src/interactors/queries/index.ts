@@ -1,1 +1,1 @@
-export * from './IGetForwardQueueQuery'
+export * from './IGetForwardLambdaQuery'

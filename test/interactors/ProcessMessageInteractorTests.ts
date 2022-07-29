@@ -3,7 +3,7 @@ import * as sinon from 'sinon';
 import 'mocha';
 import { Result } from '../../src/models';
 import { ProcessMessageInteractor } from '../../src/interactors/ProcessMessageInteractor';
-import { GetForwardQueueQueryError, IGetForwardQueueQuery } from '../../src/interactors/queries';
+import { GetForwardLambdaQueryError, IGetForwardLambdaQuery } from '../../src/interactors/queries';
 import { ForwardMessageCommandError, IForwardMessageCommand } from '../../src/interactors/commands';
 
 const CompletedPromise = <T>(value: T) => new Promise<T>((resolve, reject) => {
@@ -12,16 +12,16 @@ const CompletedPromise = <T>(value: T) => new Promise<T>((resolve, reject) => {
 
 function createProcessAllMessagesInteractor(
     overrides?: {
-        getForwardQueueResult?: Result<{ lambdaName: string }, GetForwardQueueQueryError>,
+        getForwardLambdaResult?: Result<{ lambdaName: string }, GetForwardLambdaQueryError>,
         forwardMessageResult?: Result<void, ForwardMessageCommandError>,
     }) {
 
-    const getForwardQueueQuery: IGetForwardQueueQuery = {
-        Execute: () => CompletedPromise(overrides?.getForwardQueueResult || {
+    const getForwardLambdaQuery: IGetForwardLambdaQuery = {
+        Execute: () => CompletedPromise(overrides?.getForwardLambdaResult || {
             success: false,
         })
     }
-    const getForwardQueueQuerySpy = sinon.spy(getForwardQueueQuery, 'Execute');
+    const getForwardLambdaQuerySpy = sinon.spy(getForwardLambdaQuery, 'Execute');
 
     const forwardMessageCommand: IForwardMessageCommand = {
         Execute: () => CompletedPromise(overrides?.forwardMessageResult || {
@@ -32,10 +32,10 @@ function createProcessAllMessagesInteractor(
 
     return {
         interactor: new ProcessMessageInteractor(
-            getForwardQueueQuery,
+            getForwardLambdaQuery,
             forwardMessageCommand
         ),
-        getForwardQueueQuerySpy,
+        getForwardLambdaQuerySpy,
         forwardMessageCommandSpy,
     }
 }
@@ -45,7 +45,7 @@ describe('ProcessMessageInteractor', function () {
 
         // Arrange
         const { interactor } = createProcessAllMessagesInteractor({
-            getForwardQueueResult: { success: true, data: { lambdaName: 'forward-lambda-name' } }
+            getForwardLambdaResult: { success: true, data: { lambdaName: 'forward-lambda-name' } }
         })
 
         // Act
@@ -63,7 +63,7 @@ describe('ProcessMessageInteractor', function () {
 
         // Arrange
         const { interactor } = createProcessAllMessagesInteractor({
-            getForwardQueueResult: { success: false, }
+            getForwardLambdaResult: { success: false, }
         })
 
         // Act

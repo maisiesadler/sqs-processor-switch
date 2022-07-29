@@ -1,3 +1,3 @@
 export * from './ForwardMessageCommand'
-export * from './GetForwardQueueQuery'
+export * from './GetForwardLambdaQuery'
 export * from './RecordErrorLogCommand'
