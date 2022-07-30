@@ -24,16 +24,16 @@ export class ProcessMessageInteractor implements IProcessMessageInteractor {
 
     public async Execute(message: Message): Promise<Result<void, ProcessMessageError>> {
 
-        const getQueueResult = await this.getForwardLambdaQuery.Execute(message.Type)
+        const getForwardLambdaResult = await this.getForwardLambdaQuery.Execute(message.Type)
 
-        if (!getQueueResult.success) {
+        if (!getForwardLambdaResult.success) {
             return {
                 success: false,
                 error: 'unknown-type',
             }
         }
 
-        await this.forwardMessageCommand.Execute(getQueueResult.data.lambdaName, message.Data)
+        await this.forwardMessageCommand.Execute(getForwardLambdaResult.data.lambdaName, message.Data)
 
         return {
             success: true,

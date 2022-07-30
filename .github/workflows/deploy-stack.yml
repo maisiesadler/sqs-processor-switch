@@ -27,7 +27,7 @@ jobs:
         shell: bash
         run: ./deploy/deploy-cf-stack.sh
         env:
-          SLACK_LAMBDA_NAME: ${{ secrets.SLACK_LAMBDA_NAME }}
+          RULES_ENGINE_LAMBDA: ${{ secrets.RULES_ENGINE_LAMBDA }}
 
   deploy_sqs_processor:
     name: Deploy Processor Switch Lambda function code

@@ -7,11 +7,11 @@ export class GetForwardLambdaQuery implements IGetForwardLambdaQuery {
 
         console.log('processing message type', messageType)
 
-        if (messageType === 'SlackNotification') {
+        if (messageType === 'RulesEngine') {
             return {
                 success: true,
                 data: {
-                    lambdaName: config.slackLambdaName,
+                    lambdaName: config.rulesEngineLambda,
                 }
             }
         }

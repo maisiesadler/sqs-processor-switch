@@ -2,8 +2,8 @@
 
 set -e
 
-if [[ -z "${SLACK_LAMBDA_NAME}" ]]; then
-  echo Missing SLACK_LAMBDA_NAME
+if [[ -z "${RULES_ENGINE_LAMBDA}" ]]; then
+  echo Missing RULES_ENGINE_LAMBDA
   exit 1
 fi
 
@@ -15,7 +15,7 @@ aws cloudformation deploy \
     --capabilities CAPABILITY_IAM \
     --no-fail-on-empty-changeset \
     --parameter-overrides \
-        SlackLambdaName=$SLACK_LAMBDA_NAME
+        RulesEngineLambda=$RULES_ENGINE_LAMBDA
 
 processorResource=$(aws cloudformation describe-stack-resource \
   --stack-name sqs-processor-lambda-pipeline \

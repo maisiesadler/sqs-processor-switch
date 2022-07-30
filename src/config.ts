@@ -1,5 +1,5 @@
 class Config {
-    public readonly slackLambdaName = process.env.SLACK_LAMBDA_NAME
+    public readonly rulesEngineLambda = process.env.RULES_ENGINE_LAMBDA
 }
 
 export default new Config();
